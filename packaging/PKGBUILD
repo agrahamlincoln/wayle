@@ -1,7 +1,7 @@
 # Maintainer: Graham Rounds <gtrounds@gmail.com>
 pkgname=wayle-agrahamlincoln
 pkgver=0.1.0
-pkgrel=2
+pkgrel=3
 pkgdesc="Compositor-agnostic Wayland desktop shell with bar, dropdowns, notifications, and OSD"
 arch=('x86_64')
 url="https://github.com/Jas-SinghFSU/wayle"
@@ -43,4 +43,11 @@ package() {
     install -Dm755 "target/release/wayle-shell" "$pkgdir/usr/bin/wayle-shell"
     install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
     install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+
+    # Bundled icons — wayle-icons looks for these at /usr/share/wayle/icons
+    install -dm755 "$pkgdir/usr/share/wayle/icons/hicolor/scalable/actions"
+    install -Dm644 resources/icons/hicolor/scalable/actions/*.svg \
+        -t "$pkgdir/usr/share/wayle/icons/hicolor/scalable/actions"
+    install -Dm644 resources/icons/index.theme \
+        "$pkgdir/usr/share/wayle/icons/hicolor/index.theme"
 }
