@@ -68,17 +68,41 @@ TOML section names must match the Rust struct field names exactly (e.g., `[modul
 - Runtime theming uses CSS custom properties set from the palette config
 - `--fg-muted` and `--fg-subtle` are used extensively in dropdowns/notifications — ensure palette values have sufficient contrast against `--bg-elevated`
 
-## Packaging
-
-```bash
-# Build package
-cd ~/projects/wayle && tatara build
-
-# Publish to tatara repo
-tatara publish packaging/wayle-agrahamlincoln-*.pkg.tar.zst --server grahamcube
-
-# Install on any machine
-pacman -S wayle-agrahamlincoln
-```
+## Packaging & Deployment
 
 Package name is `wayle-agrahamlincoln` to avoid conflict with AUR `wayle-git`.
+Registered on the tatara build server (grahamcube) for remote builds.
+
+### Release workflow
+```bash
+# 1. Commit and push changes to the agrahamlincoln branch
+git push origin agrahamlincoln
+
+# 2. Tag the release
+git tag v0.X.Y && git push origin v0.X.Y
+
+# 3. Build remotely on grahamcube (builds, packages, and publishes to tatara repo)
+tatara build-remote wayle-agrahamlincoln v0.X.Y --server grahamcube
+
+# 4. Install/update on any machine with tatara repo configured
+sudo pacman -Syu wayle-agrahamlincoln
+```
+
+### Local build (for development iteration)
+```bash
+# Build locally without packaging
+cargo build --release
+
+# Or build a local package
+tatara build
+
+# Copy binary directly for quick testing (skip packaging)
+sudo cp target/release/wayle-shell /usr/bin/wayle-shell
+pkill wayle-shell && wayle panel start &
+```
+
+### Build server notes
+- grahamcube must have build deps installed: `gtk4 gtk4-layer-shell libpulse pipewire fftw clang cmake cargo pkg-config`
+- The PKGBUILD inits git submodules (cava) and unsets `LDFLAGS`/`CFLAGS` to fix `aws-lc-sys` linking
+- Remote builds use the `agrahamlincoln` branch (set as default on the fork)
+- Force-pushed tags require manual `git fetch --tags -f` on the build server if cached
