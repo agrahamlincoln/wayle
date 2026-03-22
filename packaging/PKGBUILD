@@ -29,6 +29,7 @@ conflicts=('wayle')
 
 build() {
     cd "${startdir}/.."
+    git submodule update --init --recursive
     export RUSTUP_TOOLCHAIN=stable
     export CARGO_TARGET_DIR=target
     # Unset makepkg LDFLAGS/CFLAGS — they break aws-lc-sys's cmake build
