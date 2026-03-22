@@ -1,0 +1,45 @@
+# Maintainer: Graham Rounds <gtrounds@gmail.com>
+pkgname=wayle-agrahamlincoln
+pkgver=0.1.0
+pkgrel=2
+pkgdesc="Compositor-agnostic Wayland desktop shell with bar, dropdowns, notifications, and OSD"
+arch=('x86_64')
+url="https://github.com/Jas-SinghFSU/wayle"
+license=('MIT')
+depends=(
+    'gtk4'
+    'gtk4-layer-shell'
+    'libpulse'
+    'pipewire'
+    'fftw'
+    'dbus'
+    'gcc-libs'
+    'glib2'
+    'gdk-pixbuf2'
+    'hicolor-icon-theme'
+)
+makedepends=(
+    'cargo'
+    'pkg-config'
+    'clang'
+    'cmake'
+)
+provides=('wayle')
+conflicts=('wayle')
+
+build() {
+    cd "${startdir}/.."
+    export RUSTUP_TOOLCHAIN=stable
+    export CARGO_TARGET_DIR=target
+    # Unset makepkg LDFLAGS/CFLAGS — they break aws-lc-sys's cmake build
+    unset LDFLAGS CFLAGS CXXFLAGS
+    cargo build --release
+}
+
+package() {
+    cd "${startdir}/.."
+    install -Dm755 "target/release/wayle" "$pkgdir/usr/bin/wayle"
+    install -Dm755 "target/release/wayle-shell" "$pkgdir/usr/bin/wayle-shell"
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
