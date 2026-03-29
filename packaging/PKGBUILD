@@ -1,6 +1,6 @@
 # Maintainer: Graham Rounds <gtrounds@gmail.com>
 pkgname=wayle-agrahamlincoln
-pkgver=0.2.0
+pkgver=0.3.0
 pkgrel=1
 pkgdesc="Compositor-agnostic Wayland desktop shell with bar, dropdowns, notifications, and OSD"
 arch=('x86_64')
