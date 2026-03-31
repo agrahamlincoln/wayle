@@ -175,6 +175,20 @@ impl Component for CustomModule {
 
         dropdowns::dispatch_click(action, &self.dropdowns, &self.bar_button);
 
+        // For dropdown actions, schedule on_action to run after the dropdown closes
+        // so the bar label refreshes after a selection.
+        if let ClickAction::Dropdown(name) = action
+            && let Some(on_action) = &self.definition.on_action
+        {
+            let on_action = on_action.clone();
+            let module_id = self.definition.id.clone();
+            let token = self.command_token.reset();
+            let close_sender = sender.clone();
+            self.dropdowns.on_next_close(name, move || {
+                watchers::run_command_async(&close_sender, &module_id, on_action, token);
+            });
+        }
+
         // on_action only applies to shell commands (dropdowns handle their own state)
         if !matches!(action, ClickAction::Shell(_)) {
             return;
