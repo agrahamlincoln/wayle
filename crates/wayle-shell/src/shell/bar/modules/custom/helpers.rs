@@ -367,9 +367,12 @@ mod tests {
     }
 
     fn default_definition() -> CustomModuleDefinition {
-        use wayle_config::schemas::{
-            modules::{ExecutionMode, RestartDelay, RestartPolicy},
-            styling::ColorValue,
+        use wayle_config::{
+            ClickAction,
+            schemas::{
+                modules::{ExecutionMode, RestartDelay, RestartPolicy},
+                styling::ColorValue,
+            },
         };
 
         CustomModuleDefinition {
