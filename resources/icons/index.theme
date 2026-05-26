@@ -1,9 +1,9 @@
 [Icon Theme]
 Name=Wayle Icons
 Comment=Icons installed by Wayle
-Directories=hicolor/scalable/actions
+Directories=scalable/actions
 
-[hicolor/scalable/actions]
+[scalable/actions]
 Size=48
 MinSize=16
 MaxSize=512

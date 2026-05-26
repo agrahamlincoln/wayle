@@ -13,12 +13,18 @@ use crate::error::{Error, Result};
 
 const SYSTEM_ICONS_PATH: &str = "/usr/share/wayle/icons";
 
+/// Theme index for Wayle's icons. Written to `<base>/hicolor/index.theme` so the
+/// icons register as a contribution to the freedesktop "hicolor" fallback theme;
+/// the directory entry is relative to that file, so `scalable/actions` resolves to
+/// `<base>/hicolor/scalable/actions`. With the index at the search-path base
+/// instead, GTK >= 4.22 treats the base as a standalone, never-referenced theme and
+/// the icons fail to resolve (rendering as `image-missing`).
 const INDEX_THEME_CONTENT: &str = r#"[Icon Theme]
 Name=Wayle Icons
 Comment=Icons installed by Wayle
-Directories=hicolor/scalable/actions
+Directories=scalable/actions
 
-[hicolor/scalable/actions]
+[scalable/actions]
 Size=48
 MinSize=16
 MaxSize=512
@@ -195,13 +201,24 @@ impl IconRegistry {
     }
 
     fn ensure_index_theme(&self) -> Result<()> {
-        let index_path = self.base_path.join("index.theme");
+        // The index must live inside the `hicolor/` dir so GTK merges these icons
+        // into the hicolor fallback theme. `ensure_directory_structure` has already
+        // created `<base>/hicolor/scalable/actions`, so the parent dir exists.
+        let index_path = self.base_path.join("hicolor").join("index.theme");
 
         if !index_path.exists() {
             fs::write(&index_path, INDEX_THEME_CONTENT).map_err(|source| Error::WriteError {
                 path: index_path,
                 source,
             })?;
+        }
+
+        // Older versions wrote the index at the search-path base, where it made GTK
+        // treat the base as a standalone theme rather than a hicolor contributor.
+        // Remove that stale file so only the hicolor/index.theme above remains.
+        let legacy_index = self.base_path.join("index.theme");
+        if legacy_index.exists() {
+            let _ = fs::remove_file(&legacy_index);
         }
 
         Ok(())
@@ -277,6 +294,6 @@ impl IconRegistry {
     /// - The icons directory exists
     /// - The index.theme file exists
     pub fn is_valid(&self) -> bool {
-        self.icons_dir().exists() && self.base_path.join("index.theme").exists()
+        self.icons_dir().exists() && self.base_path.join("hicolor").join("index.theme").exists()
     }
 }
