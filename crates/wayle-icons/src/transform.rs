@@ -219,6 +219,11 @@ fn build_path_element(d: &str, style: IconStyle, stroke_width: Option<f32>, scal
     match style {
         IconStyle::Stroke => {
             let width = stroke_width.unwrap_or(2.0 * scale);
+            // GTK's symbolic icon renderer recolors paths via a style class, not the SVG
+            // `fill`/`stroke` attributes. Without `foreground-stroke transparent-fill` it
+            // fills every path with the symbolic color, rendering outline icons (Lucide,
+            // Tabler) as solid blobs on GTK >= 4.22. See
+            // https://docs.gtk.org/gtk4/icon-format.html
             format!(
                 "  <path d='{d}'\n\
                         stroke-width='{width:.2}'\n\
@@ -226,6 +231,7 @@ fn build_path_element(d: &str, style: IconStyle, stroke_width: Option<f32>, scal
                         stroke-linejoin='round'\n\
                         stroke='rgb(0,0,0)'\n\
                         fill='none'\n\
+                        class='foreground-stroke transparent-fill'\n\
                         gpa:stroke='foreground'/>\n"
             )
         }
@@ -234,6 +240,7 @@ fn build_path_element(d: &str, style: IconStyle, stroke_width: Option<f32>, scal
                 "  <path d='{d}'\n\
                         stroke='none'\n\
                         fill='rgb(0,0,0)'\n\
+                        class='foreground-fill'\n\
                         gpa:fill='foreground'/>\n"
             )
         }
@@ -403,6 +410,12 @@ mod tests {
                 result
             );
             assert!(
+                result.contains("class='foreground-stroke transparent-fill'"),
+                "Stroke icon must carry the foreground-stroke/transparent-fill style class \
+                 or GTK's symbolic renderer fills the outline into a solid blob, got: {}",
+                result
+            );
+            assert!(
                 result.contains("stroke-linecap='round'"),
                 "Stroke icon should have linecap, got: {}",
                 result
@@ -419,6 +432,12 @@ mod tests {
             assert!(
                 result.contains("gpa:fill='foreground'"),
                 "Fill icon should have gpa:fill attribute, got: {}",
+                result
+            );
+            assert!(
+                result.contains("class='foreground-fill'"),
+                "Fill icon must carry the foreground-fill style class so GTK recolors the \
+                 fill with the symbolic color, got: {}",
                 result
             );
             assert!(
@@ -533,6 +552,7 @@ mod tests {
             assert!(result.contains("stroke-linecap='round'"));
             assert!(result.contains("stroke-linejoin='round'"));
             assert!(result.contains("fill='none'"));
+            assert!(result.contains("class='foreground-stroke transparent-fill'"));
             assert!(result.contains("gpa:stroke='foreground'"));
         }
 
@@ -542,6 +562,7 @@ mod tests {
 
             assert!(result.contains("stroke='none'"));
             assert!(result.contains("fill='rgb(0,0,0)'"));
+            assert!(result.contains("class='foreground-fill'"));
             assert!(result.contains("gpa:fill='foreground'"));
         }
 
