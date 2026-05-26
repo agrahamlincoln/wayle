@@ -7,6 +7,7 @@ stroke-linecap='round'
 stroke-linejoin='round'
 stroke='rgb(0,0,0)'
 fill='none'
+class='foreground-stroke transparent-fill'
 gpa:stroke='foreground'/>
   <path d='M12.25 9.67C13.41 9.17 14.27 8.15 14.56 6.92C14.66 6.51 14.12 6.28 13.73 6.45C12.72 6.88 11.55 6.66 10.78 5.89C10.01 5.11 9.79 3.94 10.22 2.94C10.39 2.55 10.16 2.01 9.74 2.11C8.05 2.51 6.82 3.95 6.68 5.68'
 stroke-width='1.33'
@@ -14,5 +15,6 @@ stroke-linecap='round'
 stroke-linejoin='round'
 stroke='rgb(0,0,0)'
 fill='none'
+class='foreground-stroke transparent-fill'
 gpa:stroke='foreground'/>
 </svg>
