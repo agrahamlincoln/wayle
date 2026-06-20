@@ -1,28 +1,49 @@
-use std::{fs, path::Path};
+use std::{fs, path::PathBuf};
 
 use wayle_icons::IconRegistry;
 
 use crate::cli::CliAction;
 
-const RESOURCES_DIR: &str = concat!(
+/// Bundled component SVGs live under `<icon base>/hicolor/scalable/actions`.
+const ACTIONS_SUBDIR: &str = "hicolor/scalable/actions";
+
+/// In-tree bundle location, used when running from a source checkout (e.g.
+/// `cargo run`) where the icons have not been installed to a system prefix.
+const SOURCE_RESOURCES_DIR: &str = concat!(
     env!("CARGO_MANIFEST_DIR"),
     "/../resources/icons/hicolor/scalable/actions"
 );
+
+/// Resolves the directory holding the bundled component icons.
+///
+/// Prefers an installed system bundle (`/usr/share/wayle/icons` plus any
+/// `XDG_DATA_DIRS` entry, via [`IconRegistry::system_icon_paths`]) so packaged
+/// installs work, falling back to the in-tree `resources/` dir for source
+/// checkouts. Previously this resolved only the compile-time `CARGO_MANIFEST_DIR`
+/// path, which never exists on a packaged install — `wayle icons setup` failed
+/// for every non-source user.
+fn resolve_source_dir() -> Option<PathBuf> {
+    IconRegistry::system_icon_paths()
+        .into_iter()
+        .map(|base| base.join(ACTIONS_SUBDIR))
+        .find(|path| path.is_dir())
+        .or_else(|| {
+            let source = PathBuf::from(SOURCE_RESOURCES_DIR);
+            source.is_dir().then_some(source)
+        })
+}
 
 /// Installs bundled icons from the resources directory.
 ///
 /// # Errors
 ///
-/// Returns error if source directory doesn't exist or copy fails.
+/// Returns error if no bundle can be located or a copy fails.
 pub fn execute() -> CliAction {
-    let source_dir = Path::new(RESOURCES_DIR);
-
-    if !source_dir.exists() {
-        return Err(format!(
-            "Resources directory not found: {}",
-            source_dir.display()
-        ));
-    }
+    let source_dir = resolve_source_dir().ok_or_else(|| {
+        "Bundled icons not found. Install the wayle package or run from a source checkout."
+            .to_string()
+    })?;
+    let source_dir = source_dir.as_path();
 
     let registry = IconRegistry::new().map_err(|err| err.to_string())?;
     let dest_dir = registry.icons_dir();

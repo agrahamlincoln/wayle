@@ -256,7 +256,14 @@ impl IconRegistry {
         Ok(())
     }
 
-    pub(crate) fn system_icon_paths() -> Vec<PathBuf> {
+    /// Returns the system icon base directories that currently exist, in
+    /// search-path priority order: any `wayle/icons` dir under `XDG_DATA_DIRS`
+    /// first, then the default `/usr/share/wayle/icons`.
+    ///
+    /// These are the base dirs where the package installs bundled icons; CLI
+    /// commands use them to locate the bundle on a packaged install rather than
+    /// relying on a compile-time source path.
+    pub fn system_icon_paths() -> Vec<PathBuf> {
         let mut paths = Vec::new();
 
         let xdg_dirs = std::env::var("XDG_DATA_DIRS").unwrap_or_default();
