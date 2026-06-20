@@ -78,10 +78,15 @@ Registered on the tatara build server (grahamcube) for remote builds.
 # 1. Commit and push changes to the agrahamlincoln branch
 git push origin agrahamlincoln
 
-# 2. Tag the release
-git tag v0.X.Y && git push origin v0.X.Y
+# 2. Bump version, tag, push, and create the GitHub release.
+#    Use --skip-remote-build: `tatara release` derives the project name as
+#    `wayle` (from the crate), but the build server registers it as
+#    `wayle-agrahamlincoln`, so its auto-triggered remote build always fails
+#    with "project \"wayle\" not found in registry".
+tatara release --skip-remote-build --server grahamcube
 
-# 3. Build remotely on grahamcube (builds, packages, and publishes to tatara repo)
+# 3. Build remotely with the correct registered project name
+#    (builds, packages, and publishes to the tatara repo)
 tatara build-remote wayle-agrahamlincoln v0.X.Y --server grahamcube
 
 # 4. Install/update on any machine with tatara repo configured
@@ -93,10 +98,12 @@ sudo pacman -Syu wayle-agrahamlincoln
 # Build a local package
 tatara build
 
-# Install the package (kill panel first, then install and restart)
-pkill wayle-shell
+# Install the package, then restart the panel to load the new binary.
+# Use `wayle panel restart`, NOT `pkill` — the process is named `wayle shell`
+# (not `wayle-shell`), so `pkill wayle-shell` matches nothing and leaves the
+# old binary running on the deleted inode, holding the "already running" lock.
 sudo pacman -U packaging/wayle-agrahamlincoln-*.pkg.tar.zst
-wayle panel start &
+wayle panel restart
 ```
 
 **Note:** Do not copy binaries directly (`sudo cp target/release/wayle-shell /usr/bin/`). The binary is locked while the process runs and it bypasses package management.
