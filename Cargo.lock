@@ -4550,7 +4550,7 @@ dependencies = [
 
 [[package]]
 name = "wayle"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "chrono",
  "clap",
@@ -4696,7 +4696,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-config"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "dotenvy",
  "futures",
@@ -4736,7 +4736,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-derive"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4769,7 +4769,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-i18n"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "i18n-embed",
  "i18n-embed-fl",
@@ -4782,7 +4782,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-icons"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "futures",
  "gtk4",
@@ -4797,7 +4797,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-idle-inhibit"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "gdk4",
  "glib",
@@ -4807,7 +4807,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-ipc"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "zbus",
 ]
@@ -4942,7 +4942,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-settings"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "futures",
  "gtk4",
@@ -4966,7 +4966,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-shell"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "bytesize",
  "chrono",
@@ -5023,7 +5023,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-styling"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "grass",
  "gtk4",
@@ -5128,7 +5128,7 @@ dependencies = [
 
 [[package]]
 name = "wayle-widgets"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "chrono",
  "futures",
