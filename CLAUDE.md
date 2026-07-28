@@ -4,28 +4,13 @@
 
 Wayle is a compositor-agnostic Wayland desktop shell (statusbar + notification daemon) written in Rust with Relm4/GTK4. This is a personal fork of [wayle-rs/wayle](https://github.com/wayle-rs/wayle).
 
-## Repository Layout
-
-- `wayle/` — CLI binary (`wayle` command)
-- `crates/wayle-shell/` — GUI panel binary (`wayle-shell`)
-- `crates/wayle-config/` — TOML config schemas (defines all configurable options)
-- `crates/wayle-styling/` — SCSS theme system (compiled into binary at build time)
-- `crates/wayle-widgets/` — Reusable GTK4/Relm4 UI components (bar buttons, containers)
-- `crates/wayle-hyprland/` — Hyprland IPC integration
-- `crates/wayle-notification/` — freedesktop.org notification daemon
-- `crates/wayle-icons/` — SVG icon CDN fetching and GTK registration
-- `packaging/` — Arch Linux PKGBUILD (fork-only, not upstream)
-
 ## Build
 
-```bash
-cargo build --release
-# Binaries: target/release/wayle, target/release/wayle-shell
-```
-
-Requires: GTK4 dev headers, gtk4-layer-shell, libpulse, pipewire, fftw, cmake, clang, pkg-config.
+Build deps: GTK4 dev headers, gtk4-layer-shell, libpulse, pipewire, fftw, cmake, clang, pkg-config.
 
 **PKGBUILD note:** makepkg's `LDFLAGS`/`CFLAGS` break `aws-lc-sys` compilation. The PKGBUILD unsets these in `build()`.
+
+`packaging/` is fork-only and does not exist upstream.
 
 ## Git Workflow
 
